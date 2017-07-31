@@ -1,0 +1,37 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "rcoUTEGR7KVr963l6P1rlMaYCzA=",
+			"path": "github.com/BurntSushi/toml",
+			"revision": "a368813c5e648fee92e5f6c30e3944ff9d5e8895",
+			"revisionTime": "2017-06-26T11:06:00Z"
+		},
+		{
+			"checksumSHA1": "a2UVhOYr7kwz2TanoCASY1Y0a/0=",
+			"path": "github.com/go-sql-driver/mysql",
+			"revision": "9dee4ca50b83acdf57a35fb9e6fb4be640afa2f3",
+			"revisionTime": "2017-03-27T11:30:21Z"
+		},
+		{
+			"checksumSHA1": "i/C4memmU8wR47AbLS7S3PmSbBA=",
+			"path": "github.com/jinzhu/gorm",
+			"revision": "d510c7e4b8f0840a29b0faa8697413f36a8f7ff9",
+			"revisionTime": "2017-07-03T03:58:01Z"
+		},
+		{
+			"checksumSHA1": "w5/naAzcG0+g6aYx63/of1Wbgqw=",
+			"path": "github.com/jinzhu/gorm/dialects/mysql",
+			"revision": "d510c7e4b8f0840a29b0faa8697413f36a8f7ff9",
+			"revisionTime": "2017-07-03T03:58:01Z"
+		},
+		{
+			"checksumSHA1": "tUQ1pHvWxAcPFmveZtlmCR9H4TY=",
+			"path": "github.com/jinzhu/inflection",
+			"revision": "1c35d901db3da928c72a72d8458480cc9ade058f",
+			"revisionTime": "2017-01-02T12:52:26Z"
+		}
+	],
+	"rootPath": "migrate"
+}
