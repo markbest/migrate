@@ -1,0 +1,9 @@
+[database]
+host = "127.0.0.1"
+database = "db"
+port = "3306"
+user = "root"
+password = ""
+
+[migrate]
+table = "migrations"
