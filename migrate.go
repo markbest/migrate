@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"migrate/migrate"
+	"github.com/markbest/migrate/migrate"
 )
 
 var Usage = func() {
