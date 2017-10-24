@@ -54,7 +54,7 @@ func newDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-/* 获取所有已经执行的迁移文件 */
+//Get All migrated file
 func GetAllMigrationsFile() (m []string) {
 	var migrations []Migrate
 
@@ -68,7 +68,7 @@ func GetAllMigrationsFile() (m []string) {
 	return m
 }
 
-/* 获取最后一批操作的migrations */
+//Get last migrate files
 func GetLatestMigrationsFile(action string) (batch int64, m []Migrate) {
 	var migrate []Migrate
 
@@ -93,7 +93,7 @@ func GetLatestMigrationsFile(action string) (batch int64, m []Migrate) {
 	return batch, m
 }
 
-/* 执行迁移文件 */
+//Do migrate action
 func MigrateUp() {
 	batch, m := GetLatestMigrationsFile("up")
 	upsql, _, files := LoadMigrationsFile("up", m)
@@ -113,7 +113,7 @@ func MigrateUp() {
 	}
 }
 
-/* 回滚迁移文件 */
+//Do migrate rollback action
 func MigrateDown() {
 	batch, m := GetLatestMigrationsFile("down")
 	_, downsql, files := LoadMigrationsFile("down", m)
@@ -134,10 +134,10 @@ func MigrateDown() {
 }
 
 func MigrateStatus() {
-	//已经执行的迁移文件
+	//Already migrate
 	files := GetAllMigrationsFile()
 
-	//尚未执行的迁移文件
+	//Not migrate
 	_, m := GetLatestMigrationsFile("up")
 	_, _, others := LoadMigrationsFile("up", m)
 
