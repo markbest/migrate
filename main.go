@@ -3,13 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/markbest/migrate/migrate"
+	"github.com/markbest/migrate/db"
 )
 
 var Usage = func() {
 	fmt.Println("USAGE: migrate command [arguments] ...")
-	fmt.Println("\nThe commands are:\n\taction\tmigrate action [create|up|down|status]")
-	fmt.Println("\tfile\tmigrate file name")
+	fmt.Println("\nThe commands are:\n\taction\tmigrate [create|up|down|status]")
+	fmt.Println("\tfile\tmigrate create file")
 }
 
 func main() {
@@ -32,13 +32,13 @@ func main() {
 			fmt.Println("USAGE: migrate create <filename>")
 			return
 		}
-		migrate.CreateMigration(args[1])
+		db.CreateMigration(args[1])
 	case "up":
-		migrate.MigrateUp()
+		db.HandleMigrateUp()
 	case "down":
-		migrate.MigrateDown()
+		db.HandleMigrateDown()
 	case "status":
-		migrate.MigrateStatus()
+		db.HandleMigrateStatus()
 	default:
 		Usage()
 	}

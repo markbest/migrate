@@ -1,4 +1,4 @@
-package migrate
+package db
 
 import (
 	"fmt"
@@ -54,7 +54,7 @@ func newDB() (*gorm.DB, error) {
 	return db, nil
 }
 
-//Get All migrated file
+/* 获取所有已经执行的迁移文件 */
 func GetAllMigrationsFile() (m []string) {
 	var migrations []Migrate
 
@@ -68,17 +68,14 @@ func GetAllMigrationsFile() (m []string) {
 	return m
 }
 
-//Get last migrate files
+/* 获取最后一批操作的迁移 */
 func GetLatestMigrationsFile(action string) (batch int64, m []Migrate) {
-	var migrate []Migrate
-
+	var migrate Migrate
 	db = DB()
 	db.Order("batch desc").First(&migrate)
 
-	if len(migrate) > 0 {
-		for _, v := range migrate {
-			batch = v.Batch
-		}
+	if migrate.Batch > 0 {
+		batch = migrate.Batch
 	} else {
 		batch = 0
 	}
@@ -86,58 +83,62 @@ func GetLatestMigrationsFile(action string) (batch int64, m []Migrate) {
 	if batch > 0 {
 		if action == "up" {
 			db.Where("batch <= ?", batch).Find(&m)
-		} else if action == "down" {
+		}
+		if action == "down" {
 			db.Where("batch = ?", batch).Find(&m)
 		}
 	}
 	return batch, m
 }
 
-//Do migrate action
-func MigrateUp() {
+/* 执行迁移 */
+func HandleMigrateUp() {
 	batch, m := GetLatestMigrationsFile("up")
-	upsql, _, files := LoadMigrationsFile("up", m)
+	upSql, _, files := LoadMigrationsFile("up", m)
 
 	db = DB()
-	for _, k := range upsql {
-		db.Exec(k)
-	}
-
-	if len(files) > 0 {
-		for _, v := range files {
-			db.Create(&Migrate{Migration: v, Batch: batch + 1})
-			fmt.Print("migrate " + v + " successfully\n")
+	tx := db.Begin()
+	for k, v := range upSql {
+		if err := tx.Exec(v).Error; err != nil {
+			tx.Rollback()
+			panic(err)
+		} else {
+			db.Create(&Migrate{Migration: files[k], Batch: batch + 1})
+			fmt.Println("migrate " + files[k] + " successfully")
 		}
-	} else {
-		fmt.Print("no migrations\n")
+	}
+	tx.Commit()
+
+	if len(files) == 0 {
+		fmt.Println("no migration files")
 	}
 }
 
-//Do migrate rollback action
-func MigrateDown() {
-	batch, m := GetLatestMigrationsFile("down")
-	_, downsql, files := LoadMigrationsFile("down", m)
+/* 回滚迁移 */
+func HandleMigrateDown() {
+	_, m := GetLatestMigrationsFile("down")
+	_, downSql, files := LoadMigrationsFile("down", m)
 
 	db = DB()
-	for _, k := range downsql {
-		db.Exec(k)
-	}
-
-	if len(files) > 0 {
-		for _, v := range files {
-			db.Delete(&Migrate{Migration: v, Batch: batch})
-			fmt.Print("rollback " + v + " successfully\n")
+	tx := db.Begin()
+	for k, v := range downSql {
+		if err := tx.Exec(v).Error; err != nil {
+			tx.Rollback()
+			panic(err)
+		} else {
+			db.Where("migration = ?", files[k]).Delete(Migrate{})
+			fmt.Println("rollback " + files[k] + " successfully")
 		}
-	} else {
-		fmt.Print("no rollback\n")
+	}
+	tx.Commit()
+
+	if len(files) == 0 {
+		fmt.Println("no rollback files")
 	}
 }
 
-func MigrateStatus() {
-	//Already migrate
+func HandleMigrateStatus() {
 	files := GetAllMigrationsFile()
-
-	//Not migrate
 	_, m := GetLatestMigrationsFile("up")
 	_, _, others := LoadMigrationsFile("up", m)
 
@@ -149,6 +150,8 @@ func MigrateStatus() {
 		for _, v := range files {
 			fmt.Println("|  Y  | " + v)
 		}
+	} else {
+		fmt.Println("| No migrate files |")
 	}
 
 	if len(others) > 0 {
