@@ -1,4 +1,4 @@
-package db
+package migrate
 
 import (
 	"bufio"
@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	migrateTpl      = "./db/tpl/migrate.sql.tpl"
-	migrateFilePath = "./db/migrations/"
+	migrateTpl      = "./migrate/tpl/migrate.sql.tpl"
+	migrateFilePath = "./migrate/migrations/"
 )
 
 /* 加载迁移模板的内容 */
@@ -45,7 +45,7 @@ func CreateMigration(name string) {
 		panic(err)
 	}
 	io.WriteString(f, string(tplContent))
-	fmt.Println("create db " + migrateFile + " successfully")
+	fmt.Println("create migrate " + migrateFile + " successfully")
 }
 
 /* 获取迁移文件的内容以及文件列表 */
@@ -59,7 +59,7 @@ func LoadMigrationsFile(action string, m []Migrate) (migrateUp []string, migrate
 	case "down":
 		if len(m) > 0 {
 			for _, v := range m {
-				files = append(files, "db"+PthSep+"migrations"+PthSep+v.Migration)
+				files = append(files, "migrate"+PthSep+"migrations"+PthSep+v.Migration)
 			}
 		}
 		break
@@ -71,7 +71,7 @@ func LoadMigrationsFile(action string, m []Migrate) (migrateUp []string, migrate
 	for _, v := range files {
 		mUp = ""
 		mDown = ""
-		migrations = append(migrations, strings.Replace(v, "db"+PthSep+"migrations"+PthSep, "", -1))
+		migrations = append(migrations, strings.Replace(v, "migrate"+PthSep+"migrations"+PthSep, "", -1))
 		up, down := ParseMigrationsFile(v)
 		for _, m := range up {
 			mUp = mUp + m
