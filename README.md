@@ -1,7 +1,7 @@
 ## migrate
 Golang实现的数据库迁移管理工具
 
-## 配置使用
+## usage
 - 拷贝conf/conf.toml.exmpale为conf/conf.toml，并配置数据库信息
 - go build -o bin/migrate migrate.go，编译生成可执行文件
 - bin/migrate create [filename]（创建迁移文件）
